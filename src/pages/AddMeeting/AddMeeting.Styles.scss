@@ -1,0 +1,31 @@
+.add-meeting-container {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 0 2rem;
+  box-sizing: content-box;
+  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #c9d1e7;
+  h1 {
+    color: #362128;
+  }
+  .fields-wrapper {
+    margin-top: 2rem;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 1.5rem 3rem;
+    max-width: 30rem;
+    background-color: #b6c6f2;
+    .field-wrapper {
+      margin-bottom: 2rem;
+
+      .label {
+        margin-left: 8px;
+        color: #362128;
+      }
+    }
+  }
+}
