@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "graphql-hooks";
 import { toBuildingDataApiTransform } from "../../utils/api/api-transforms/buildings-api-transform";
@@ -48,14 +48,14 @@ const Home: React.FC = () => {
               subTexts={subTexts}
             />
           ))}
-        <button
+        <Button
           className="add-meeting-button"
           onClick={() => {
             navigate("/add-meeting");
           }}
         >
           Add a meeting
-        </button>
+        </Button>
       </Box>
     </div>
   );

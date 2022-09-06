@@ -55,7 +55,13 @@ export const BUILDINGS_DATA_QUERY = `query Building {
   Buildings {
     name
     meetingRooms {
+      id
       name
+      floor
+      building {
+        id
+        name
+      }
       meetings {
         title
         date

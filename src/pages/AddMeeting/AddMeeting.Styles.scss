@@ -1,7 +1,6 @@
 .add-meeting-container {
   width: 100vw;
   min-height: 100vh;
-  padding: 0 2rem;
   box-sizing: content-box;
   align-content: center;
   display: flex;
@@ -11,6 +10,21 @@
   background-color: #c9d1e7;
   h1 {
     color: #362128;
+  }
+  .add-meeting-button {
+    height: 3rem;
+    background-color: #b6c6f2;
+    width: 12rem;
+    color: #4a444c;
+    border: 0;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    &:hover {
+      background-color: #97bca9;
+    }
   }
   .fields-wrapper {
     margin-top: 2rem;

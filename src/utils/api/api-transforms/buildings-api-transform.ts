@@ -10,6 +10,12 @@ import {
   IFieldsKeys,
   ILabelCardFields,
 } from "../../../interfaces/module-interfaces/home-page-interface";
+import {
+  IFormFieldsKeys,
+  IInputFieldsModel,
+  IMeetingRoomForm,
+} from "../../../interfaces/module-interfaces/add-meeting-interface";
+import { convertTimeToMinutes, dateFieldToEpoch } from "../tools";
 
 const iterate = (field?: number) => {
   let iterator = field;
@@ -28,10 +34,16 @@ export const isMeetingsClashing = (
   const meetingDate = meeting?.date;
 
   /* As Date coming from API is in same format */
-  const requiredDateEpoch = timeFrame?.date?.toLocaleDateString();
+  const requiredDate = timeFrame?.date?.toLocaleDateString();
+  let requiredDateEpoch: number = 0;
+  if (timeFrame?.date?.getTime()) {
+    requiredDateEpoch = Math.floor(timeFrame?.date?.getTime() / (1000 * 60));
+  }
 
   let meetingStartTimeSeconds: number = 0;
   let meetingEndTimeSeconds: number = 0;
+  let requiredStartTimeEpoch: number = 0;
+  let requiredEndTimeEpoch: number = 0;
 
   if (meeting?.startTime) {
     const [hours, minutes] = meeting?.startTime.split(":");
@@ -46,18 +58,13 @@ export const isMeetingsClashing = (
     if (Number(minutes) > 0) meetingEndTimeSeconds += Number(minutes) * 60;
   }
 
-  const todaysEpoch = +new Date(`${new Date().toDateString()}`);
+  if (requiredDateEpoch && timeFrame?.startTime)
+    requiredStartTimeEpoch = requiredDateEpoch + timeFrame?.startTime;
 
-  const requiredStartTimeEpoch = Math.floor(
-    (Number(+new Date(timeFrame?.startTime as Date)) - Number(todaysEpoch)) /
-      1000
-  );
-  const requiredEndTimeEpoch = Math.floor(
-    (Number(+new Date(timeFrame?.endTime as Date)) - Number(todaysEpoch)) / 1000
-  );
-
+  if (requiredDateEpoch && timeFrame?.endTime)
+    requiredEndTimeEpoch = requiredDateEpoch + timeFrame?.endTime;
   return (
-    meetingDate === requiredDateEpoch &&
+    meetingDate === requiredDate &&
     ((requiredStartTimeEpoch > meetingStartTimeSeconds &&
       requiredStartTimeEpoch < meetingEndTimeSeconds) ||
       (requiredEndTimeEpoch > meetingStartTimeSeconds &&
@@ -116,8 +123,12 @@ export const toBuildingDataApiTransform = (
                 if (
                   isMeetingsClashing(meeting, {
                     date: timeNow,
-                    startTime: timeNow,
-                    endTime: timeNow,
+                    startTime: convertTimeToMinutes(
+                      timeNow?.toLocaleTimeString()
+                    ),
+                    endTime: convertTimeToMinutes(
+                      timeNow?.toLocaleTimeString()
+                    ),
                   })
                 ) {
                   isMeetingRoomAvailable = false;
@@ -161,4 +172,113 @@ export const toBuildingDataApiTransform = (
   }
 
   return tempLabelCardFields;
+};
+
+export const getAvailableRooms = (
+  buildings: IBuildingsDataApiModel[],
+  meetingRoomForm: IMeetingRoomForm
+) => {
+  let freeMeetingRooms: IMeetingRoomsApiModel[] = [];
+
+  if (buildings && buildings?.length) {
+    buildings.forEach(({ meetingRooms }: IBuildingsDataApiModel) => {
+      if (meetingRooms && meetingRooms?.length) {
+        meetingRooms.forEach((meetingRoom: IMeetingRoomsApiModel) => {
+          const { meetings } = meetingRoom;
+          let isMeetingRoomAvailable = true;
+          if (meetings && meetings?.length) {
+            meetings.forEach((meeting) => {
+              const date = dateFieldToEpoch(
+                meetingRoomForm?.date?.value as string
+              );
+              const startTime = convertTimeToMinutes(
+                meetingRoomForm?.startTime?.value as string
+              );
+              const endTime = convertTimeToMinutes(
+                meetingRoomForm?.endTime?.value as string
+              );
+              if (date && startTime && endTime) {
+                const meetingRoomSpecs: ITimeFrame = {
+                  date,
+                  startTime,
+                  endTime,
+                };
+                if (isMeetingsClashing(meeting, meetingRoomSpecs)) {
+                  isMeetingRoomAvailable = false;
+                }
+              }
+            });
+          }
+          if (isMeetingRoomAvailable) {
+            freeMeetingRooms.push(meetingRoom);
+          }
+        });
+      }
+    });
+  }
+
+  return freeMeetingRooms;
+};
+
+export const isFieldValid = (
+  key: IFormFieldsKeys,
+  fieldData: IInputFieldsModel,
+  meetingRoomForm: IMeetingRoomForm
+): boolean => {
+  let isValidField: boolean = true;
+
+  if (!fieldData?.value) {
+    isValidField = false;
+
+    return isValidField;
+  }
+  switch (key) {
+    case "date":
+      const [year, month, day] = fieldData?.value.toString().split("-");
+      const [tday, tmonth, tYear] = new Date().toLocaleDateString().split("/");
+
+      if (
+        +new Date(`${month}/${day}/${year}`) <
+        +new Date(`${tmonth}/${tday}/${tYear}`)
+      ) {
+        isValidField = false;
+      }
+      break;
+    case "startTime":
+      {
+        const [stHours, stMinutes] = fieldData?.value.toString().split(":");
+        const [etHours, etMinutes] =
+          meetingRoomForm?.endTime?.value?.toString().split(":") || [];
+        const [hoursNow, minutesNow] = new Date()
+          .toLocaleTimeString()
+          .split(":");
+        const now: number = 60 * Number(hoursNow) + Number(minutesNow);
+        const startTime: number = 60 * Number(stHours) + Number(stMinutes);
+        const endTime: number = 60 * Number(etHours) + Number(etMinutes);
+
+        if (now > startTime || startTime >= endTime) {
+          isValidField = false;
+        }
+      }
+      break;
+    case "endTime":
+      {
+        const [etHours, etMinutes] = fieldData?.value.toString().split(":");
+        const [stHours, stMinutes] =
+          meetingRoomForm?.startTime?.value?.toString().split(":") || [];
+        const [hoursNow, minutesNow] = new Date()
+          .toLocaleTimeString()
+          .split(":");
+        const now: number = 60 * Number(hoursNow) + Number(minutesNow);
+        const startTime: number = 60 * Number(stHours) + Number(stMinutes);
+        const endTime: number = 60 * Number(etHours) + Number(etMinutes);
+
+        if (now > endTime || startTime >= endTime) {
+          isValidField = false;
+        }
+      }
+      break;
+  }
+
+  return isValidField;
 };

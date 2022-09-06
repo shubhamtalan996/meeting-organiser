@@ -7,6 +7,7 @@ export interface ILabelCardProps {
   label?: string;
   subTexts?: ISubText[];
   className?: string;
+  handleClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
 const LabelCard: React.FC<ILabelCardProps> = ({
@@ -14,6 +15,7 @@ const LabelCard: React.FC<ILabelCardProps> = ({
   label,
   subTexts,
   className,
+  handleClick,
 }) => {
   return (
     <Box
@@ -22,15 +24,15 @@ const LabelCard: React.FC<ILabelCardProps> = ({
       flexDirection="column"
       className={`cardWrapper ${className}`}
       key={id}
+      onClick={handleClick}
     >
       <Typography className="label">{label}</Typography>
       {subTexts &&
         subTexts?.length &&
-        subTexts.map(({ key, label: subTextLabel, value }) => (
-          <Typography
-            key={key}
-            className="value"
-          >{`${subTextLabel}${value}`}</Typography>
+        subTexts.map(({ key, label: subTextLabel, value }, index) => (
+          <Typography key={key || index} className="value">{`${
+            subTextLabel ?? ""
+          }${value ?? ""}`}</Typography>
         ))}
     </Box>
   );

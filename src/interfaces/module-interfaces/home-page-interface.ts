@@ -1,7 +1,7 @@
 export interface ITimeFrame {
-  date?: Date;
-  startTime?: Date;
-  endTime?: Date;
+  date: Date;
+  startTime: number;
+  endTime: number;
 }
 
 export type IFieldsKeys =
@@ -28,8 +28,8 @@ export interface IHomePageFields {
 }
 
 export interface ISubText {
-  key: string;
-  label: string;
+  key?: string;
+  label?: string;
   value?: string;
 }
 
