@@ -4,6 +4,7 @@ import Modal from "@mui/material/Modal";
 import LabelCard from "../../Molecules/LabelCard";
 import { IMeetingRoomsApiModel } from "../../../interfaces/api-interfaces/buildings-api-interface";
 import { IModelConfig } from "../../../interfaces/module-interfaces/add-meeting-interface";
+import "./AddMeetingModal.Styles.scss";
 
 interface IAddMeetingModal {
   modalConfig?: IModelConfig;
@@ -30,8 +31,7 @@ const AddMeetingModal = ({
       <Fade in={modalConfig?.open}>
         <div className="modal-wrapper">
           <h1>Please select one of the free rooms</h1>
-          {vacantRooms &&
-            vacantRooms?.length > 0 &&
+          {vacantRooms && vacantRooms?.length > 0 ? (
             vacantRooms.map(({ name, building, floor, id }, index) => (
               <LabelCard
                 id={`${id || index}`}
@@ -55,7 +55,20 @@ const AddMeetingModal = ({
                   if (handleCardClick) handleCardClick(id);
                 }}
               />
-            ))}
+            ))
+          ) : (
+            <LabelCard
+              id="fallback"
+              className="room-card fallback"
+              label={"Sorry,"}
+              subTexts={[
+                {
+                  key: "message",
+                  label: "There are no available rooms in this building",
+                },
+              ]}
+            />
+          )}
           <Button
             className="add-meeting-button"
             size="medium"

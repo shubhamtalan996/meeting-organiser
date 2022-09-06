@@ -27,3 +27,9 @@ export interface IBuildingsDataApiModel {
 export interface IBuildingsDataResponse {
   Buildings?: IBuildingsDataApiModel[];
 }
+
+export interface IShowSnackBar {
+  open?: boolean;
+  message?: string;
+  severity?: "error" | "warning" | "info" | "success";
+}

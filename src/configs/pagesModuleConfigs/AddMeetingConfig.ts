@@ -3,6 +3,11 @@ import { IMeetingRoomForm } from "../../interfaces/module-interfaces/add-meeting
 export const getDefaultMeetingRoomForm = (): IMeetingRoomForm => {
   const [day, month, year] = new Date().toLocaleDateString().split("/");
   const [hour, minutes] = new Date().toLocaleTimeString().split(":");
+  const [endTimeHour, endTimeMinutes] = new Date(
+    new Date().getTime() + 1000 * 60 * 30
+  )
+    .toLocaleTimeString()
+    .split(":");
   return {
     title: {
       label: "Title",
@@ -25,7 +30,7 @@ export const getDefaultMeetingRoomForm = (): IMeetingRoomForm => {
     endTime: {
       label: "End Time",
       type: "time",
-      value: `${hour}:${Number(minutes) + 30}`,
+      value: `${endTimeHour}:${endTimeMinutes}`,
       error: false,
     },
     building: {

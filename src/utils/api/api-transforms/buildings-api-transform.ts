@@ -175,44 +175,39 @@ export const toBuildingDataApiTransform = (
 };
 
 export const getAvailableRooms = (
-  buildings: IBuildingsDataApiModel[],
+  building: IBuildingsDataApiModel,
   meetingRoomForm: IMeetingRoomForm
 ) => {
   let freeMeetingRooms: IMeetingRoomsApiModel[] = [];
+  const { meetingRooms } = building;
 
-  if (buildings && buildings?.length) {
-    buildings.forEach(({ meetingRooms }: IBuildingsDataApiModel) => {
-      if (meetingRooms && meetingRooms?.length) {
-        meetingRooms.forEach((meetingRoom: IMeetingRoomsApiModel) => {
-          const { meetings } = meetingRoom;
-          let isMeetingRoomAvailable = true;
-          if (meetings && meetings?.length) {
-            meetings.forEach((meeting) => {
-              const date = dateFieldToEpoch(
-                meetingRoomForm?.date?.value as string
-              );
-              const startTime = convertTimeToMinutes(
-                meetingRoomForm?.startTime?.value as string
-              );
-              const endTime = convertTimeToMinutes(
-                meetingRoomForm?.endTime?.value as string
-              );
-              if (date && startTime && endTime) {
-                const meetingRoomSpecs: ITimeFrame = {
-                  date,
-                  startTime,
-                  endTime,
-                };
-                if (isMeetingsClashing(meeting, meetingRoomSpecs)) {
-                  isMeetingRoomAvailable = false;
-                }
-              }
-            });
-          }
-          if (isMeetingRoomAvailable) {
-            freeMeetingRooms.push(meetingRoom);
+  if (meetingRooms && meetingRooms?.length) {
+    meetingRooms.forEach((meetingRoom: IMeetingRoomsApiModel) => {
+      const { meetings } = meetingRoom;
+      let isMeetingRoomAvailable = true;
+      if (meetings && meetings?.length) {
+        meetings.forEach((meeting) => {
+          const date = dateFieldToEpoch(meetingRoomForm?.date?.value as string);
+          const startTime = convertTimeToMinutes(
+            meetingRoomForm?.startTime?.value as string
+          );
+          const endTime = convertTimeToMinutes(
+            meetingRoomForm?.endTime?.value as string
+          );
+          if (date && startTime && endTime) {
+            const meetingRoomSpecs: ITimeFrame = {
+              date,
+              startTime,
+              endTime,
+            };
+            if (isMeetingsClashing(meeting, meetingRoomSpecs)) {
+              isMeetingRoomAvailable = false;
+            }
           }
         });
+      }
+      if (isMeetingRoomAvailable) {
+        freeMeetingRooms.push(meetingRoom);
       }
     });
   }

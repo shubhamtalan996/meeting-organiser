@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
+import Snackbar from "@mui/material/Snackbar";
 import { useNavigate } from "react-router-dom";
 import "./AddMeeting.Styles.scss";
-import { useQuery, useMutation } from "graphql-hooks";
+import { useQuery, useMutation, useManualQuery } from "graphql-hooks";
 import {
   ADD_MEETING,
   BUILDINGS_DATA_QUERY,
@@ -12,6 +13,7 @@ import {
 import {
   IBuildingsDataApiModel,
   IMeetingRoomsApiModel,
+  IShowSnackBar,
 } from "../../interfaces/api-interfaces/buildings-api-interface";
 import {
   getAvailableRooms,
@@ -35,12 +37,19 @@ const AddMeeting = () => {
 
   const [vacantRooms, setVacantRooms] = useState<IMeetingRoomsApiModel[]>([]);
 
+  //will make this centeralized  state throughout the app
+  const [showSnackBar, setShowSnackBar] = useState<IShowSnackBar>();
+
   const [modalConfig, setModalConfig] = useState<IModelConfig>({
     open: false,
   });
 
-  const { data: buildingsData } = useQuery(BUILDINGS_DATA_QUERY);
-  const { data: MeetingsData } = useQuery(MEETING_QUERY);
+  const [fetchBuildings, { data: buildingsData }] =
+    useManualQuery(BUILDINGS_DATA_QUERY);
+  const [fetchMeetings, { data: MeetingsData }] = useManualQuery(MEETING_QUERY);
+
+  //   const { data: buildingsData } = useQuery(BUILDINGS_DATA_QUERY);
+  //   const { data: MeetingsData } = useQuery(MEETING_QUERY);
 
   const handleFieldValueChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -107,10 +116,16 @@ const AddMeeting = () => {
 
   const submitMeetingDetails = () => {
     if (validateMeetingDetailsForm()) {
-      if (buildingsData?.Buildings && buildingsData?.Buildings?.length) {
-        setVacantRooms(
-          getAvailableRooms(buildingsData?.Buildings, meetingRoomForm)
+      if (
+        buildingsData?.Buildings &&
+        buildingsData?.Buildings?.length &&
+        meetingRoomForm?.building?.value
+      ) {
+        const building = buildingsData?.Buildings.find(
+          ({ id, ...rest }: IBuildingsDataApiModel) =>
+            id === Number(meetingRoomForm?.building?.value)
         );
+        setVacantRooms(getAvailableRooms(building, meetingRoomForm));
       }
       setModalConfig((prevConfig: IModelConfig) => ({
         ...prevConfig,
@@ -119,13 +134,11 @@ const AddMeeting = () => {
     }
   };
 
-  console.log(vacantRooms);
-
   const bookMeetingRoom = () => {
     if (modalConfig?.selectedCardId) {
       const payload = {
         id: Number(MeetingsData?.Meetings?.length) + 1,
-        title: meetingRoomForm?.title ?? "New Meeting",
+        title: meetingRoomForm?.title?.value ?? "New Meeting",
         startTime: meetingRoomForm?.startTime?.value,
 
         endTime: meetingRoomForm?.endTime?.value,
@@ -139,11 +152,39 @@ const AddMeeting = () => {
           navigate("/home");
         })
         .catch(() => {});
+    } else {
+      setShowSnackBar({
+        open: true,
+        message: "No Rooms Available",
+        severity: "error",
+      } as IShowSnackBar);
     }
   };
 
+  useEffect(() => {
+    fetchBuildings();
+    fetchMeetings();
+  }, [fetchBuildings, fetchMeetings]);
+
   return (
     <div className="add-meeting-container">
+      <Snackbar
+        open={showSnackBar?.open}
+        autoHideDuration={6000}
+        onClose={() =>
+          setShowSnackBar({ open: false, message: "" } as IShowSnackBar)
+        }
+        message={showSnackBar?.message}
+      >
+        <Alert
+          onClose={() =>
+            setShowSnackBar({ open: false, message: "" } as IShowSnackBar)
+          }
+          severity={showSnackBar?.severity}
+        >
+          {showSnackBar?.message}
+        </Alert>
+      </Snackbar>
       <h1>Add Meeting</h1>
       <Box
         component="div"
@@ -184,7 +225,7 @@ const AddMeeting = () => {
                       buildingsData?.Buildings?.length > 0 &&
                       buildingsData?.Buildings?.map(
                         (building: IBuildingsDataApiModel) => (
-                          <MenuItem value={building?.name} key={building?.name}>
+                          <MenuItem value={building?.id} key={building?.id}>
                             {building?.name}
                           </MenuItem>
                         )
