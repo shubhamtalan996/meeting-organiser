@@ -4,9 +4,9 @@ import Modal from "@mui/material/Modal";
 import LabelCard from "../../Molecules/LabelCard";
 import { IMeetingRoomsApiModel } from "../../../interfaces/api-interfaces/buildings-api-interface";
 import { IModelConfig } from "../../../interfaces/module-interfaces/add-meeting-interface";
-import "./AddMeetingModal.Styles.scss";
+import "./RoomSelectorModal.Styles.scss";
 
-interface IAddMeetingModal {
+interface IRoomSelectorModal {
   modalConfig?: IModelConfig;
   handleClose?: () => void;
   vacantRooms?: IMeetingRoomsApiModel[];
@@ -14,13 +14,13 @@ interface IAddMeetingModal {
   bookMeeting?: () => void;
 }
 
-const AddMeetingModal = ({
+const RoomSelectorModal = ({
   modalConfig,
   handleClose,
   vacantRooms,
   handleCardClick,
   bookMeeting,
-}: IAddMeetingModal) => {
+}: IRoomSelectorModal) => {
   return (
     <Modal
       open={modalConfig?.open ?? false}
@@ -84,4 +84,4 @@ const AddMeetingModal = ({
   );
 };
 
-export default AddMeetingModal;
+export default RoomSelectorModal;

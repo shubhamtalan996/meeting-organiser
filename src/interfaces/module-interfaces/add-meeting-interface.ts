@@ -1,3 +1,5 @@
+import { IMeetingRoomsApiModel } from "../api-interfaces/buildings-api-interface";
+
 export type IFormFieldsKeys =
   | "title"
   | "date"
@@ -26,4 +28,5 @@ export type IMeetingRoomForm = {
 export interface IModelConfig {
   open: boolean;
   selectedCardId?: string;
+  rooms: IMeetingRoomsApiModel[];
 }

@@ -15,6 +15,7 @@ import {
   IInputFieldsModel,
   IMeetingRoomForm,
 } from "../../../interfaces/module-interfaces/add-meeting-interface";
+import { MIN_MEETING_DURATION } from "../../../configs/pagesModuleConfigs/AddMeetingConfig";
 import { convertTimeToMinutes, dateFieldToEpoch } from "../tools";
 
 const iterate = (field?: number) => {
@@ -177,7 +178,7 @@ export const toBuildingDataApiTransform = (
 export const getAvailableRooms = (
   building: IBuildingsDataApiModel,
   meetingRoomForm: IMeetingRoomForm
-) => {
+): IMeetingRoomsApiModel[] => {
   let freeMeetingRooms: IMeetingRoomsApiModel[] = [];
   const { meetingRooms } = building;
 
@@ -242,16 +243,12 @@ export const isFieldValid = (
     case "startTime":
       {
         const [stHours, stMinutes] = fieldData?.value.toString().split(":");
-        const [etHours, etMinutes] =
-          meetingRoomForm?.endTime?.value?.toString().split(":") || [];
         const [hoursNow, minutesNow] = new Date()
           .toLocaleTimeString()
           .split(":");
         const now: number = 60 * Number(hoursNow) + Number(minutesNow);
         const startTime: number = 60 * Number(stHours) + Number(stMinutes);
-        const endTime: number = 60 * Number(etHours) + Number(etMinutes);
-
-        if (now > startTime || startTime >= endTime) {
+        if (now > startTime) {
           isValidField = false;
         }
       }
@@ -267,8 +264,7 @@ export const isFieldValid = (
         const now: number = 60 * Number(hoursNow) + Number(minutesNow);
         const startTime: number = 60 * Number(stHours) + Number(stMinutes);
         const endTime: number = 60 * Number(etHours) + Number(etMinutes);
-
-        if (now > endTime || startTime >= endTime) {
+        if (now > endTime || startTime + MIN_MEETING_DURATION > endTime) {
           isValidField = false;
         }
       }

@@ -24,7 +24,7 @@ export const MEETING_ROOM_QUERY = `query FetchRoom($id:Int!)
   }
 }`;
 
-export const ADD_MEETING = `mutation AddMeeting($id: Int!,$title: String!
+export const ADD_MEETING_QUERY = `mutation AddMeeting($id: Int!,$title: String!
   $date: String!,
   $startTime: String!,
   $endTime: String!,

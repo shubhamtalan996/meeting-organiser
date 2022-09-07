@@ -1,5 +1,7 @@
 import { IMeetingRoomForm } from "../../interfaces/module-interfaces/add-meeting-interface";
 
+export const MIN_MEETING_DURATION = 30;
+
 export const getDefaultMeetingRoomForm = (): IMeetingRoomForm => {
   const [day, month, year] = new Date().toLocaleDateString().split("/");
   const [hour, minutes] = new Date().toLocaleTimeString().split(":");

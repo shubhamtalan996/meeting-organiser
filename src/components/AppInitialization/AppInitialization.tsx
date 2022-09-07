@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { GraphQLClient, ClientContext } from "graphql-hooks";
+import { AppRootContextProvider } from "../../context/AppRootContext";
+import Snackbar from "../Organism/Snackbar";
 
 const client = new GraphQLClient({
   url: "http://smart-meeting.herokuapp.com",
@@ -12,7 +14,12 @@ export type IAppInitializationProps = {
 
 const AppInitialization: React.FC<IAppInitializationProps> = ({ children }) => {
   return (
-    <ClientContext.Provider value={client}>{children}</ClientContext.Provider>
+    <AppRootContextProvider>
+      <ClientContext.Provider value={client}>
+        <Snackbar />
+        {children}
+      </ClientContext.Provider>
+    </AppRootContextProvider>
   );
 };
 

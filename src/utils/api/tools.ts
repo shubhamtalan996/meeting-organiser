@@ -14,6 +14,14 @@ export const dateFieldToEpoch = (date: string): Date | undefined => {
   return;
 };
 
+export const localeDateFieldToEpoch = (date: string): Date | undefined => {
+  if (date) {
+    const [day, month, year] = date?.toString().split("/");
+    return new Date(`${month}/${day}/${year}`);
+  }
+  return;
+};
+
 export const dateFieldToLocaleDate = (date: string): string | undefined => {
   if (date) {
     const [year, month, day] = date?.toString().split("-");
