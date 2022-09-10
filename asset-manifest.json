@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/meeting-organiser/static/css/main.d76925f2.css",
+    "main.js": "/meeting-organiser/static/js/main.75cd8607.js",
+    "static/css/475.c81cea30.chunk.css": "/meeting-organiser/static/css/475.c81cea30.chunk.css",
+    "static/js/475.994869e2.chunk.js": "/meeting-organiser/static/js/475.994869e2.chunk.js",
+    "static/css/761.58360c50.chunk.css": "/meeting-organiser/static/css/761.58360c50.chunk.css",
+    "static/js/761.cfc5f328.chunk.js": "/meeting-organiser/static/js/761.cfc5f328.chunk.js",
+    "static/js/787.428535c3.chunk.js": "/meeting-organiser/static/js/787.428535c3.chunk.js",
+    "static/js/638.36e6700a.chunk.js": "/meeting-organiser/static/js/638.36e6700a.chunk.js",
+    "static/js/130.8ca36f28.chunk.js": "/meeting-organiser/static/js/130.8ca36f28.chunk.js",
+    "index.html": "/meeting-organiser/index.html",
+    "main.d76925f2.css.map": "/meeting-organiser/static/css/main.d76925f2.css.map",
+    "main.75cd8607.js.map": "/meeting-organiser/static/js/main.75cd8607.js.map",
+    "475.c81cea30.chunk.css.map": "/meeting-organiser/static/css/475.c81cea30.chunk.css.map",
+    "475.994869e2.chunk.js.map": "/meeting-organiser/static/js/475.994869e2.chunk.js.map",
+    "761.58360c50.chunk.css.map": "/meeting-organiser/static/css/761.58360c50.chunk.css.map",
+    "761.cfc5f328.chunk.js.map": "/meeting-organiser/static/js/761.cfc5f328.chunk.js.map",
+    "787.428535c3.chunk.js.map": "/meeting-organiser/static/js/787.428535c3.chunk.js.map",
+    "638.36e6700a.chunk.js.map": "/meeting-organiser/static/js/638.36e6700a.chunk.js.map",
+    "130.8ca36f28.chunk.js.map": "/meeting-organiser/static/js/130.8ca36f28.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d76925f2.css",
+    "static/js/main.75cd8607.js"
+  ]
+}
